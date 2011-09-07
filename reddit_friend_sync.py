@@ -43,7 +43,7 @@ def make_http_request(method, url, **postdata):
         urllib2.install_opener(opener)
     if postdata:
         postdata = urllib.urlencode(postdata)
-    if (method == "GET"):
+    if method == "GET":
         url += "?"
         for key in postdata:
             url+= key + "=" + postdata[key] + "&"
@@ -55,7 +55,8 @@ def make_http_request(method, url, **postdata):
 
 print "starting reddit_friend_sync"
 # cycle through login info array and build friends list
-friends = []
+allfriends = []
+friends = {}
 for userpass in login_info:
     print "getting friends for " + userpass[0]
     # login
@@ -70,10 +71,13 @@ for userpass in login_info:
     for friend_match in re.finditer('<td><span\sclass="user"><a\shref="http://www.reddit.com/user/.*?/" >(?P<friendname>.*?)</a>', content):
         parsed_friends.append(friend_match.group("friendname"))
     
-    # add friends to friend list
+    # add friends to friend dictionary under key for username
+    friends[userpass[0]] = parsed_friends
+    
+    # add friends to big friends list
     for friend_name in parsed_friends:
-        if (friends.count(friend_name) == 0):
-            friends.append(friend_name)
+        if allfriends.count(friend_name) == 0:
+                allfriends.append(friend_name)
 
 # sync friends list on each account
 for userpass in login_info:
@@ -87,8 +91,10 @@ for userpass in login_info:
     container_id = jsondata["kind"] + "_" + jsondata["data"]["id"]
     modhash = jsondata["data"]["modhash"]
     
-    # add friends
-    for friend in friends:
-        make_http_request("POST", friends_api_url, action="add", type="friend", name=friend, uh=modhash, container=container_id)
-    
+    # add friends that current user doesn't already have (reduce api calls)
+    friends_to_add = [x for x in allfriends if x not in set(friends[userpass[0]])]
+    for friend_to_add in friends_to_add:
+        print "\tadding " + friend_to_add
+        make_http_request("POST", friends_api_url, action="add", type="friend", name=friend_to_add, uh=modhash, container=container_id)
+
 print "finishing reddit_friend_sync"
