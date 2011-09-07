@@ -12,11 +12,16 @@ login_info = [
 ["user3", "pass3"]
 ]
 
+add_self_to_friends should be either "True" or "False" (without quotations)
+
 """
 
 # login info array
 login_info = [
 ]
+
+# add user to user's set of friends? (helps for finding your own posts on page)
+add_self_to_friends = True
 
 #DO NOT MODIFY BELOW THIS LINE
 
@@ -70,6 +75,11 @@ for userpass in login_info:
     parsed_friends = []
     for friend_match in re.finditer('<td><span\sclass="user"><a\shref="http://www.reddit.com/user/.*?/" >(?P<friendname>.*?)</a>', content):
         parsed_friends.append(friend_match.group("friendname"))
+        
+    # see if we add ourself to friend's list
+    if add_self_to_friends:
+        if allfriends.count(userpass[0]) == 0:
+            allfriends.append(userpass[0])
     
     # add friends to friend dictionary under key for username
     friends[userpass[0]] = parsed_friends
