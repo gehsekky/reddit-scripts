@@ -1,3 +1,10 @@
-Utility scripts to enhance the reddit experience.
+utility scripts to enhance the reddit experience.
 
 written by andy
+
+REQUIREMENTS:
+* python 2.7
+
+TODO:
+* use dom parsing to scrape html instead of regex parsing
+* subreddit syncing
