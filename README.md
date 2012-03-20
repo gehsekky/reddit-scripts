@@ -1,6 +1,8 @@
+# reddit scripts
+
 utility scripts to enhance the reddit experience.
 
-written by andy
+@author gehsekky
 
 REQUIREMENTS:
 * python 2.7
