@@ -10,3 +10,4 @@ REQUIREMENTS:
 TODO:
 * use dom parsing to scrape html instead of regex parsing
 * subreddit syncing
+* update everything with praw and make this script super simple
